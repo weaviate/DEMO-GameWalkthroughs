@@ -1,8 +1,15 @@
 import weaviate.exceptions
 
-try:
+def create_game_schema():
+    """
+    Create a game schema according to game_schema.json, if container did not contains any schema
+    :return:
+    """
     client = weaviate.Client("http://localhost:8080")
-    client.create_schema("game_schema.json")
-except weaviate.exceptions.UnexpectedStatusCodeException as e:
-    print(e.json)
+    if not client.contains_schema():
+        client.create_schema("game_schema.json")
+    else:
+        print("Weaviate container already contained a schema")
 
+if __name__ == "__main__":
+    create_game_schema()

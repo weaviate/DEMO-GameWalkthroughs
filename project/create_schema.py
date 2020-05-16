@@ -6,6 +6,8 @@ def create_game_schema():
     :return:
     """
     client = weaviate.Client("http://localhost:8080")
+    if not client.is_reachable():
+        raise Exception("Container is not reachable")
     if not client.contains_schema():
         client.create_schema("game_schema.json")
     else:

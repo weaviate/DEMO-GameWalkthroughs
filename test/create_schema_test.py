@@ -167,15 +167,41 @@ class TestCreateGameSchema(unittest.TestCase):
         output_genre = self.client.get_thing(genre["uuid"])
         output_game = self.client.get_thing(game["uuid"])
 
-        platform_schema = output_genre.get("schema")
+        genre_schema = output_genre.get("schema")
         game_schema = output_game.get("schema")
 
-        self.assertEqual(len(platform_schema.get("hasGames")), 1)
+        self.assertEqual(len(genre_schema.get("hasGames")), 1)
         self.assertEqual(len(game_schema.get("ofGenre")), 1)
         self.assertIn(genre["uuid"], game_schema.get("ofGenre")[0]["href"])
-        self.assertIn(game["uuid"], platform_schema.get("hasGames")[0]["href"])
+        self.assertIn(game["uuid"], genre_schema.get("hasGames")[0]["href"])
 
         delete_platform = self.client.delete_thing(genre["uuid"])
         delete_game = self.client.delete_thing(game["uuid"])
         self.assertIsNone(delete_platform)
         self.assertIsNone(delete_game)
+
+    def test_create_game_tag_relation(self):
+        tag = helper.generate_platform("Tag 1")
+        game = helper.generate_game("Game 1", "Developer 1")
+
+        self.client.create_thing(helper.extract_attribute(game), "Game", game["uuid"])
+        self.client.create_thing(helper.extract_attribute(tag), "Tag", tag["uuid"])
+
+        time.sleep(2)
+
+        self.client.add_reference_to_thing(tag["uuid"], "hasGames", game["uuid"])
+
+        time.sleep(2)
+
+        output_tag = self.client.get_thing(tag["uuid"])
+
+        tag_schema = output_tag.get("schema")
+
+        self.assertEqual(len(tag_schema.get("hasGames")), 1)
+        self.assertIn(game["uuid"], tag_schema.get("hasGames")[0]["href"])
+
+        delete_platform = self.client.delete_thing(tag["uuid"])
+        delete_game = self.client.delete_thing(game["uuid"])
+        self.assertIsNone(delete_platform)
+        self.assertIsNone(delete_game)
+

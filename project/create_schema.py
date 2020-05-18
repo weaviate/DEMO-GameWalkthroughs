@@ -15,3 +15,4 @@ def create_game_schema():
 
 if __name__ == "__main__":
     create_game_schema()
+    # todo: make article scheme

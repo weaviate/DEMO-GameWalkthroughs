@@ -151,7 +151,7 @@ class TestCreateGameSchema(unittest.TestCase):
         self.assertIsNone(delete_game)
 
     def test_create_game_genre_relation(self):
-        genre = helper.generate_platform("Genre 1")
+        genre = helper.generate_genre("Genre 1")
         game = helper.generate_game("Game 1", "Developer 1")
 
         self.client.create_thing(helper.extract_attribute(game), "Game", game["uuid"])
@@ -181,7 +181,7 @@ class TestCreateGameSchema(unittest.TestCase):
         self.assertIsNone(delete_game)
 
     def test_create_game_tag_relation(self):
-        tag = helper.generate_platform("Tag 1")
+        tag = helper.generate_tag("Tag 1")
         game = helper.generate_game("Game 1", "Developer 1")
 
         self.client.create_thing(helper.extract_attribute(game), "Game", game["uuid"])
@@ -201,6 +201,31 @@ class TestCreateGameSchema(unittest.TestCase):
         self.assertIn(game["uuid"], tag_schema.get("hasGames")[0]["href"])
 
         delete_platform = self.client.delete_thing(tag["uuid"])
+        delete_game = self.client.delete_thing(game["uuid"])
+        self.assertIsNone(delete_platform)
+        self.assertIsNone(delete_game)
+
+    def test_create_game_video_relation(self):
+        video = helper.generate_video("Video 1", "123", "Description", 60, 100)
+        game = helper.generate_game("Game 1", "Developer 1")
+
+        self.client.create_thing(helper.extract_attribute(game), "Game", game["uuid"])
+        self.client.create_thing(helper.extract_attribute(video), "Video", video["uuid"])
+
+        time.sleep(2)
+
+        self.client.add_reference_to_thing(video["uuid"], "ofGame", game["uuid"])
+
+        time.sleep(2)
+
+        output_video = self.client.get_thing(video["uuid"])
+
+        video_schema = output_video.get("schema")
+
+        self.assertEqual(len(video_schema.get("ofGame")), 1)
+        self.assertIn(game["uuid"], video_schema.get("ofGame")[0]["href"])
+
+        delete_platform = self.client.delete_thing(video["uuid"])
         delete_game = self.client.delete_thing(game["uuid"])
         self.assertIsNone(delete_platform)
         self.assertIsNone(delete_game)

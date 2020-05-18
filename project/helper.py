@@ -38,6 +38,13 @@ def generate_subtitle(text, start_time, end_time, ofGame=None):
         "ofGame": ofGame if ofGame else [],
     }
 
+def generate_tag(name, hasGames=None):
+    return {
+        "uuid": generate_id(),
+        "name": name,
+        "hasGames": hasGames if hasGames else [],
+    }
+
 def generate_video(title, youtube_id, description, duration, view_count, ofGame=None, hasTags=None, hasSubs=None):
     return {
         "uuid": generate_id(),

@@ -120,4 +120,34 @@ class TestCreateGameSchema(unittest.TestCase):
         delete_output = self.client.delete_thing(video1["uuid"])
         self.assertIsNone(delete_output)
 
+    def test_create_platform_game_relation(self):
+        game = helper.generate_game("Game 1", "Developer 1")
+        platform = helper.generate_platform("Platform 1")
+
+        self.client.create_thing(helper.extract_attribute(game), "Game", game["uuid"])
+        self.client.create_thing(helper.extract_attribute(platform), "Platform", platform["uuid"])
+
+        time.sleep(2)
+
+        self.client.add_reference_to_thing(platform["uuid"], "hasGames", game["uuid"])
+        self.client.add_reference_to_thing(game["uuid"], "onPlatform", platform["uuid"])
+
+        time.sleep(2)
+
+        output_platform = self.client.get_thing(platform["uuid"])
+        output_game = self.client.get_thing(game["uuid"])
+
+        platform_schema = output_platform.get("schema")
+        game_schema = output_game.get("schema")
+
+        self.assertEqual(len(platform_schema.get("hasGames")), 1)
+        self.assertEqual(len(game_schema.get("onPlatform")), 1)
+        self.assertIn(platform["uuid"], game_schema.get("onPlatform")[0]["href"])
+        self.assertIn(game["uuid"], platform_schema.get("hasGames")[0]["href"])
+
+        delete_platform = self.client.delete_thing(platform["uuid"])
+        delete_game = self.client.delete_thing(game["uuid"])
+        self.assertIsNone(delete_platform)
+        self.assertIsNone(delete_game)
+
 

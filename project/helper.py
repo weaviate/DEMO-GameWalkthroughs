@@ -6,10 +6,17 @@ def generate_id():
 def extract_attribute(d):
     return {k: d[k] for k in d.keys() if k != "uuid"}
 
-def generate_platform(platform_name, has_games=None):
+def generate_platform(name, has_games=None):
     return {
         "uuid": generate_id(),
-        "name": platform_name,
+        "name": name,
+        "hasGames": has_games if has_games else []
+    }
+
+def generate_genre(name, has_games=None):
+    return {
+        "uuid": generate_id(),
+        "name": name,
         "hasGames": has_games if has_games else []
     }
 

@@ -34,8 +34,8 @@
               "text"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": false,
-            "index": false,
+            "vectorizePropertyName": true,
+            "index": true,
             "keywords": []
           },
           {
@@ -152,8 +152,8 @@
               "text"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": false,
-            "index": false,
+            "vectorizePropertyName": true,
+            "index": true,
             "keywords": []
           },
           {
@@ -259,9 +259,9 @@
           },
           {
             "name": "startTime",
-            "description": "The start time of this caption appearance in second from the beginning of the video",
+            "description": "The start time of this caption appearance on the video",
             "dataType": [
-              "number"
+              "text"
             ],
             "cardinality": "atMostOne",
             "vectorizePropertyName": true,
@@ -270,9 +270,9 @@
           },
           {
             "name": "endTime",
-            "description": "The end time of this caption appearance in second from the beginning of the video",
+            "description": "The end time of this caption appearance on the video",
             "dataType": [
-              "number"
+              "text"
             ],
             "cardinality": "atMostOne",
             "vectorizePropertyName": true,

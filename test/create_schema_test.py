@@ -304,7 +304,3 @@ class TestCreateGameSchema(unittest.TestCase):
         delete_game = self.client.delete_thing(subtitle["uuid"])
         self.assertIsNone(delete_platform)
         self.assertIsNone(delete_game)
-
-# tag video - subtitle
-# tag video - tag
-

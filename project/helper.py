@@ -74,7 +74,7 @@ def scrap_article(article_link):
         "paragraph_list": paragraph_list
     }
 
-def scrap_video(video_url):
+def scrap_video_autosub(video_url):
     ydl_opts = {
         "writeautomaticsub": True,
         "skip_download": True,
@@ -91,6 +91,7 @@ def extract_video_metadata(video_url):
         meta = ydl.extract_info(video_url, download=False)
         return {
             'youtubeId': meta.get("id"),
+            'title': meta.get("title"),
             'description': meta.get("description"),
             'duration': meta.get("duration"),
             'viewCount': meta.get("view_count"),

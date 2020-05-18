@@ -1,1 +1,3 @@
 weaviate-client
+newspaper3k
+youtube_dl

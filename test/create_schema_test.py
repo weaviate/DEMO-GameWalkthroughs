@@ -68,4 +68,25 @@ class TestCreateGameSchema(unittest.TestCase):
         delete_output = self.client.delete_thing(game1["uuid"])
         self.assertIsNone(delete_output)
 
+    def test_create_simple_video(self):
+        video1 = helper.generate_video("Title 1", "123", "Description", 60, 100, [], [], [])
+        self.client.create_thing(helper.extract_attribute(video1), "Video", video1["uuid"])
+
+        time.sleep(2)
+
+        output_video1 = self.client.get_thing(video1["uuid"])
+        self.assertEqual(output_video1.get("class"), "Video")
+        self.assertEqual(output_video1.get("id"), video1["uuid"])
+        self.assertEqual(output_video1.get("schema").get("title"), video1["title"])
+        self.assertEqual(output_video1.get("schema").get("youtubeId"), video1["youtubeId"])
+        self.assertEqual(output_video1.get("schema").get("description"), video1["description"])
+        self.assertEqual(output_video1.get("schema").get("duration"), video1["duration"])
+        self.assertEqual(output_video1.get("schema").get("viewCount"), video1["viewCount"])
+        self.assertEqual(output_video1.get("schema").get("ofGame"), video1["ofGame"])
+        self.assertEqual(output_video1.get("schema").get("hasTags"), video1["hasTags"])
+        self.assertEqual(output_video1.get("schema").get("hasSubs"), video1["hasSubs"])
+
+        delete_output = self.client.delete_thing(video1["uuid"])
+        self.assertIsNone(delete_output)
+
 

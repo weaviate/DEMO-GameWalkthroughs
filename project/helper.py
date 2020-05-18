@@ -28,3 +28,17 @@ def generate_game(name, developer, ofGenre=None, onPlatform=None):
         "ofGenre": ofGenre if ofGenre else [],
         "onPlatform": onPlatform if onPlatform else [],
     }
+
+def generate_video(title, youtube_id, description, duration, view_count, ofGame=None, hasTags=None, hasSubs=None):
+    return {
+        "uuid": generate_id(),
+        "title": title,
+        "youtubeId": youtube_id,
+        "description": description,
+        "duration": duration,
+        "viewCount": view_count,
+
+        "ofGame": ofGame if ofGame else [],
+        "hasTags": hasTags if hasSubs else [],
+        "hasSubs": hasSubs if hasSubs else [],
+    }

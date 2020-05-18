@@ -51,7 +51,7 @@ class TestCreateGameSchema(unittest.TestCase):
         self.assertIsNone(delete_output)
 
     def test_create_simple_subtitle(self):
-        subtitle1 = helper.generate_subtitle("Subtitle 1", 1, 2)
+        subtitle1 = helper.generate_subtitle("Subtitle 1", "00:00:02.100", "00:00:06.769")
         self.client.create_thing(helper.extract_attribute(subtitle1), "Subtitle", subtitle1["uuid"])
 
         time.sleep(2)
@@ -231,7 +231,7 @@ class TestCreateGameSchema(unittest.TestCase):
         self.assertIsNone(delete_game)
 
     def test_create_game_subtitle_relation(self):
-        subtitle = helper.generate_subtitle("Subtitle 1", 1, 2)
+        subtitle = helper.generate_subtitle("Subtitle 1", "00:00:02.100", "00:00:06.769")
         game = helper.generate_game("Game 1", "Developer 1")
 
         self.client.create_thing(helper.extract_attribute(game), "Game", game["uuid"])
@@ -282,7 +282,7 @@ class TestCreateGameSchema(unittest.TestCase):
 
     def test_create_video_subtitle_relation(self):
         video = helper.generate_video("Video 1", "123", "Description", 60, 100)
-        subtitle = helper.generate_subtitle("Subtitle 1", 1, 2)
+        subtitle = helper.generate_subtitle("Subtitle 1", "00:00:02.100", "00:00:06.769")
 
         self.client.create_thing(helper.extract_attribute(subtitle), "Subtitle", subtitle["uuid"])
         self.client.create_thing(helper.extract_attribute(video), "Video", video["uuid"])

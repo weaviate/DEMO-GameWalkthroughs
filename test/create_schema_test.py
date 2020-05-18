@@ -50,6 +50,22 @@ class TestCreateGameSchema(unittest.TestCase):
         delete_output = self.client.delete_thing(platform1["uuid"])
         self.assertIsNone(delete_output)
 
+    def test_create_simple_subtitle(self):
+        subtitle1 = helper.generate_subtitle("Subtitle 1", 1, 2)
+        self.client.create_thing(helper.extract_attribute(subtitle1), "Subtitle", subtitle1["uuid"])
+
+        time.sleep(2)
+
+        output_subtitle1 = self.client.get_thing(subtitle1["uuid"])
+        self.assertEqual(output_subtitle1.get("class"), "Subtitle")
+        self.assertEqual(output_subtitle1.get("id"), subtitle1["uuid"])
+        self.assertEqual(output_subtitle1.get("schema").get("text"), subtitle1["text"])
+        self.assertEqual(output_subtitle1.get("schema").get("startTime"), subtitle1["startTime"])
+        self.assertEqual(output_subtitle1.get("schema").get("endTime"), subtitle1["endTime"])
+        self.assertEqual(output_subtitle1.get("schema").get("ofGame"), subtitle1["ofGame"])
+
+        delete_output = self.client.delete_thing(subtitle1["uuid"])
+        self.assertIsNone(delete_output)
 
     def test_create_simple_game(self):
         game1 = helper.generate_game("Game 1", "Developer 1", [], [])

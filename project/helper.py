@@ -29,6 +29,15 @@ def generate_game(name, developer, ofGenre=None, onPlatform=None):
         "onPlatform": onPlatform if onPlatform else [],
     }
 
+def generate_subtitle(text, start_time, end_time, ofGame=None):
+    return {
+        "uuid": generate_id(),
+        "text": text,
+        "startTime": start_time,
+        "endTime": end_time,
+        "ofGame": ofGame if ofGame else [],
+    }
+
 def generate_video(title, youtube_id, description, duration, view_count, ofGame=None, hasTags=None, hasSubs=None):
     return {
         "uuid": generate_id(),

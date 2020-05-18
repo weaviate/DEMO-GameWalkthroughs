@@ -121,8 +121,8 @@ class TestCreateGameSchema(unittest.TestCase):
         self.assertIsNone(delete_output)
 
     def test_create_platform_game_relation(self):
-        game = helper.generate_game("Game 1", "Developer 1")
         platform = helper.generate_platform("Platform 1")
+        game = helper.generate_game("Game 1", "Developer 1")
 
         self.client.create_thing(helper.extract_attribute(game), "Game", game["uuid"])
         self.client.create_thing(helper.extract_attribute(platform), "Platform", platform["uuid"])
@@ -150,4 +150,32 @@ class TestCreateGameSchema(unittest.TestCase):
         self.assertIsNone(delete_platform)
         self.assertIsNone(delete_game)
 
+    def test_create_game_genre_relation(self):
+        genre = helper.generate_platform("Genre 1")
+        game = helper.generate_game("Game 1", "Developer 1")
 
+        self.client.create_thing(helper.extract_attribute(game), "Game", game["uuid"])
+        self.client.create_thing(helper.extract_attribute(genre), "Genre", genre["uuid"])
+
+        time.sleep(2)
+
+        self.client.add_reference_to_thing(genre["uuid"], "hasGames", game["uuid"])
+        self.client.add_reference_to_thing(game["uuid"], "ofGenre", genre["uuid"])
+
+        time.sleep(2)
+
+        output_genre = self.client.get_thing(genre["uuid"])
+        output_game = self.client.get_thing(game["uuid"])
+
+        platform_schema = output_genre.get("schema")
+        game_schema = output_game.get("schema")
+
+        self.assertEqual(len(platform_schema.get("hasGames")), 1)
+        self.assertEqual(len(game_schema.get("ofGenre")), 1)
+        self.assertIn(genre["uuid"], game_schema.get("ofGenre")[0]["href"])
+        self.assertIn(game["uuid"], platform_schema.get("hasGames")[0]["href"])
+
+        delete_platform = self.client.delete_thing(genre["uuid"])
+        delete_game = self.client.delete_thing(game["uuid"])
+        self.assertIsNone(delete_platform)
+        self.assertIsNone(delete_game)

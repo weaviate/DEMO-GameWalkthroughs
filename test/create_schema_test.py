@@ -280,6 +280,30 @@ class TestCreateGameSchema(unittest.TestCase):
         self.assertIsNone(delete_platform)
         self.assertIsNone(delete_game)
 
+    def test_create_video_subtitle_relation(self):
+        video = helper.generate_video("Video 1", "123", "Description", 60, 100)
+        subtitle = helper.generate_subtitle("Subtitle 1", 1, 2)
+
+        self.client.create_thing(helper.extract_attribute(subtitle), "Subtitle", subtitle["uuid"])
+        self.client.create_thing(helper.extract_attribute(video), "Video", video["uuid"])
+
+        time.sleep(2)
+
+        self.client.add_reference_to_thing(video["uuid"], "hasSubs", subtitle["uuid"])
+
+        time.sleep(2)
+
+        output_video = self.client.get_thing(video["uuid"])
+
+        video_schema = output_video.get("schema")
+
+        self.assertEqual(len(video_schema.get("hasSubs")), 1)
+        self.assertIn(subtitle["uuid"], video_schema.get("hasSubs")[0]["href"])
+
+        delete_platform = self.client.delete_thing(video["uuid"])
+        delete_game = self.client.delete_thing(subtitle["uuid"])
+        self.assertIsNone(delete_platform)
+        self.assertIsNone(delete_game)
 
 # tag video - subtitle
 # tag video - tag

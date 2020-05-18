@@ -83,6 +83,19 @@ def scrap_video(video_url):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([video_url])
 
+def extract_video_metadata(video_url):
+    ydl_opts = {
+        "quiet": True,
+    }
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        meta = ydl.extract_info(video_url, download=False)
+        return {
+            'youtubeId': meta.get("id"),
+            'description': meta.get("description"),
+            'duration': meta.get("duration"),
+            'viewCount': meta.get("view_count"),
+        }
+
 def extract_autosub(subtitle_path):
     with open(subtitle_path) as i:
         raw_text = i.read()

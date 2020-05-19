@@ -23,7 +23,7 @@
               "text"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": true,
+            "vectorizePropertyName": false,
             "index": true,
             "keywords": []
           },
@@ -34,7 +34,7 @@
               "text"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": true,
+            "vectorizePropertyName": false,
             "index": true,
             "keywords": []
           },
@@ -73,7 +73,7 @@
               "text"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": true,
+            "vectorizePropertyName": false,
             "index": true,
             "keywords": []
           },
@@ -131,7 +131,7 @@
               "text"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": true,
+            "vectorizePropertyName": false,
             "index": true,
             "keywords": []
           },
@@ -152,8 +152,8 @@
               "text"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": true,
-            "index": true,
+            "vectorizePropertyName": false,
+            "index": false,
             "keywords": []
           },
           {
@@ -163,7 +163,7 @@
               "text"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": true,
+            "vectorizePropertyName": false,
             "index": true,
             "keywords": []
           },
@@ -253,7 +253,7 @@
               "text"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": true,
+            "vectorizePropertyName": false,
             "index": true,
             "keywords": []
           },
@@ -261,22 +261,22 @@
             "name": "startTime",
             "description": "The start time of this caption appearance on the video",
             "dataType": [
-              "text"
+              "string"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": true,
-            "index": true,
+            "vectorizePropertyName": false,
+            "index": false,
             "keywords": []
           },
           {
             "name": "endTime",
             "description": "The end time of this caption appearance on the video",
             "dataType": [
-              "text"
+              "string"
             ],
             "cardinality": "atMostOne",
-            "vectorizePropertyName": true,
-            "index": true,
+            "vectorizePropertyName": false,
+            "index": false,
             "keywords": []
           },
           {

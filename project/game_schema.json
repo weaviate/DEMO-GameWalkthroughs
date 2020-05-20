@@ -1,0 +1,296 @@
+{
+  "actions": {
+    "classes": [],
+    "type": "action"
+  },
+  "things": {
+    "@context": "",
+    "version": "0.2.0",
+    "type": "thing",
+    "name": "game",
+    "maintainer": "yourfriends@weaviate.com",
+    "classes": [
+      {
+        "class": "Game",
+        "description": "A form of play, especially a competitive one played according to rules and decided by skill, strength, or luck",
+        "vectorizeClassName": false,
+        "keywords": [],
+        "properties": [
+          {
+            "name": "name",
+            "description": "The name of this game",
+            "dataType": [
+              "text"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": true,
+            "keywords": []
+          },
+          {
+            "name": "developer",
+            "description": "The developer name of this game",
+            "dataType": [
+              "text"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": true,
+            "keywords": []
+          },
+          {
+            "name": "ofGenre",
+            "description": "The genre of this game",
+            "dataType": [
+              "Genre"
+            ],
+            "cardinality": "many",
+            "vectorizePropertyName": false,
+            "index": false
+          },
+          {
+            "name": "onPlatform",
+            "description": "The platform used on this game",
+            "dataType": [
+              "Platform"
+            ],
+            "cardinality": "many",
+            "vectorizePropertyName": false,
+            "index": false
+          }
+        ]
+      },
+      {
+        "class": "Genre",
+        "description": "A category of a game characterized by similarities in form, style, or subject matter",
+        "vectorizeClassName": false,
+        "keywords": [],
+        "properties": [
+          {
+            "name": "name",
+            "description": "The name of this genre",
+            "dataType": [
+              "text"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": true,
+            "keywords": []
+          },
+          {
+            "name": "hasGames",
+            "description": "All games within this genre",
+            "dataType": [
+              "Game"
+            ],
+            "cardinality": "many",
+            "vectorizePropertyName": false,
+            "index": false
+          }
+        ]
+      },
+      {
+        "class": "Platform",
+        "description": "A type of computer system specially made for playing video games, or also known as a console",
+        "vectorizeClassName": false,
+        "keywords": [],
+        "properties": [
+          {
+            "name": "name",
+            "description": "The name of this platform",
+            "dataType": [
+              "text"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": true,
+            "index": true,
+            "keywords": []
+          },
+          {
+            "name": "hasGames",
+            "description": "All games within this type of platform",
+            "dataType": [
+              "Game"
+            ],
+            "cardinality": "many",
+            "vectorizePropertyName": false,
+            "index": false
+          }
+        ]
+      },
+      {
+        "class": "Video",
+        "description": "A recording of moving visual images",
+        "vectorizeClassName": false,
+        "keywords": [],
+        "properties": [
+          {
+            "name": "title",
+            "description": "The title of this video",
+            "dataType": [
+              "text"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": true,
+            "keywords": []
+          },
+          {
+            "name": "ofGame",
+            "description": "The game referenced on this video",
+            "dataType": [
+              "Game"
+            ],
+            "cardinality": "many",
+            "vectorizePropertyName": false,
+            "index": false
+          },
+          {
+            "name": "youtubeId",
+            "description": "The Youtube video ID of this video",
+            "dataType": [
+              "text"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": false,
+            "keywords": []
+          },
+          {
+            "name": "description",
+            "description": "The description of this video",
+            "dataType": [
+              "text"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": true,
+            "keywords": []
+          },
+          {
+            "name": "hasTags",
+            "description": "The tags attached to this video",
+            "dataType": [
+              "Tag"
+            ],
+            "cardinality": "many",
+            "vectorizePropertyName": false,
+            "index": false
+          },
+          {
+            "name": "duration",
+            "description": "The duration of this video in second",
+            "dataType": [
+              "int"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": false,
+            "keywords": []
+          },
+          {
+            "name": "viewCount",
+            "description": "The viewer count of this video",
+            "dataType": [
+              "int"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": false,
+            "keywords": []
+          },
+          {
+            "name": "hasSubs",
+            "description": "All subtitles of this video",
+            "dataType": [
+              "Subtitle"
+            ],
+            "cardinality": "many",
+            "vectorizePropertyName": false,
+            "index": false
+          }
+        ]
+      },
+      {
+        "class": "Tag",
+        "description": "A label attached to a Game for the purpose of identification or to give other information",
+        "vectorizeClassName": false,
+        "keywords": [],
+        "properties": [
+          {
+            "name": "name",
+            "description": "The name of this tag",
+            "dataType": [
+              "text"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": true,
+            "index": true,
+            "keywords": []
+          },
+          {
+            "name": "hasGames",
+            "description": "All games within this tag",
+            "dataType": [
+              "Game"
+            ],
+            "cardinality": "many",
+            "vectorizePropertyName": false,
+            "index": false
+          }
+        ]
+      },
+      {
+        "class": "Subtitle",
+        "description": "A caption displayed at the bottom of a video that translate or transcribe the dialogue or narrative",
+        "vectorizeClassName": false,
+        "keywords": [],
+        "properties": [
+          {
+            "name": "text",
+            "description": "The text of this caption",
+            "dataType": [
+              "text"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": true,
+            "keywords": []
+          },
+          {
+            "name": "startTime",
+            "description": "The start time of this caption appearance on the video",
+            "dataType": [
+              "string"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": false,
+            "keywords": []
+          },
+          {
+            "name": "endTime",
+            "description": "The end time of this caption appearance on the video",
+            "dataType": [
+              "string"
+            ],
+            "cardinality": "atMostOne",
+            "vectorizePropertyName": false,
+            "index": false,
+            "keywords": []
+          },
+          {
+            "name": "ofGame",
+            "description": "The game referenced on this subtitle",
+            "dataType": [
+              "Game"
+            ],
+            "cardinality": "many",
+            "vectorizePropertyName": false,
+            "index": false
+          }
+        ]
+      }
+    ]
+  }
+}

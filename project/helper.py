@@ -101,3 +101,108 @@ def extract_autosub(subtitle_path):
     with open(subtitle_path) as i:
         raw_text = i.read()
         return re.findall("(\d\d:\d\d:\d\d\.\d\d\d) --> (\d\d:\d\d:\d\d\.\d\d\d).+\n(.{2,})\n", raw_text)
+
+
+class Manager():
+    def __init__(self, client):
+        self.client = client
+
+    def execute_query(self, query):
+        return self.client.query(query)
+
+    def get_platform_or_false(self, platform_name):
+        result = self.execute_query(f"""
+        {{
+          Get {{
+            Things {{
+              Platform(where: {{
+                path: ["name"],
+                operator: Equal,
+                valueString: "{platform_name}"
+              }}) {{
+                uuid
+                name
+              }}
+            }}
+          }}
+        }}
+        """)
+        platforms = result['data']['Get']['Things']['Platform']
+        if len(platforms):
+            return platforms[0]
+        else:
+            return False
+
+    def get_or_create_platform(self, platform_name):
+        platform = self.get_platform_or_false(platform_name)
+        if platform == False:
+            platform = generate_platform(platform_name, [])
+            self.client.create_thing(extract_attribute(platform), "Platform", platform["uuid"])
+            return True, platform
+        return False, platform
+
+    def get_genre_or_false(self, genre_name):
+        result = self.execute_query(f"""
+        {{
+          Get {{
+            Things {{
+              Genre(where: {{
+                path: ["name"],
+                operator: Equal,
+                valueString: "{genre_name}"
+              }}) {{
+                uuid
+                name
+              }}
+            }}
+          }}
+        }}
+        """)
+        genre = result['data']['Get']['Things']['Genre']
+        if len(genre):
+            return genre[0]
+        else:
+            return False
+
+    def get_or_create_genre(self, genre_name):
+        genre = self.get_genre_or_false(genre_name)
+        if genre == False:
+            genre = generate_genre(genre_name, [])
+            self.client.create_thing(extract_attribute(genre), "Genre", genre["uuid"])
+            return True, genre
+        return False, genre
+
+    # def get_video_or_false(self, youtube_id):
+    #     result = self.execute_query(f"""
+    #     {{
+    #       Get {{
+    #         Things {{
+    #           Video(where: {{
+    #             path: ["youtubeId"],
+    #             operator: Equal,
+    #             valueString: "{youtube_id}"
+    #           }}) {{
+    #             uuid
+    #             title
+    #             duration
+    #             youtubeId
+    #             viewCount
+    #           }}
+    #         }}
+    #       }}
+    #     }}
+    #     """)
+    #
+    #     videos = result['data']['Get']['Things']['Video']
+    #     if len(videos):
+    #         return videos[0]
+    #     else:
+    #         return False
+
+    # def get_or_create_video(self, youtube_id, video):
+    #     platform = self.get_platform_or_false(youtube_id)
+    #     if platform == False:
+    #         platform = generate_platform(youtube_id, [])
+    #         self.client.create_thing(extract_attribute(platform), "Platform", platform["uuid"])
+    #         return True, platform
+    #     return False, platform

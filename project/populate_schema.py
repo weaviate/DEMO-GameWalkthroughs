@@ -69,7 +69,8 @@ def populate_video(manager):
                     subtitle = manager.create_subtitle(text=e[2],
                                                        start_time=e[0],
                                                        end_time=e[1])
-                    inserted_subtitle_uuids.append(subtitle["uuid"])
+                    if subtitle is not None:
+                        inserted_subtitle_uuids.append(subtitle["uuid"])
 
                 time.sleep(2)
 

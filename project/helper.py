@@ -302,6 +302,7 @@ class Manager():
         except UnexpectedStatusCodeException:
             print("Exception on subtitles")
             print(subtitle_dict)
+            return None
 
     def add_reference_of_game_subtitle(self, game_uuid, subtitle_uuids=None):
         if subtitle_uuids:

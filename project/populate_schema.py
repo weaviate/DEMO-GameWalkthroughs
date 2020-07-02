@@ -5,8 +5,7 @@ import weaviate
 from weaviate.exceptions import UnexpectedStatusCodeException
 
 
-def populate_game():
-    manager = helper.Manager(weaviate.Client("http://localhost:8080"))
+def populate_game(manager):
     with open("data/games") as i:
         for line in i:
             game_name, game_developer, raw_genres, raw_platforms = [e.strip() for e in line.strip().split(';')]
@@ -33,8 +32,8 @@ def populate_game():
             print()
 
 
-def populate_video():
-    client = weaviate.Client("http://localhost:8080")
+def populate_video(manager):
+    # client = weaviate.Client("http://localhost:8080")
     with open("data/video_links") as i:
         # todo: add batch
         for line in i:
@@ -42,21 +41,23 @@ def populate_video():
             print(f"game name: {game_name} | link: {link}")
 
             # todo: get or create game instance
-            # return
+            game = manager.get_game_or_false(game_name)
+            if game == False:
+                raise Exception(f"Game {game_name} is not there yet. Please run populate_game() first.")
 
             print("downloading video metadata")
             video_metadata = helper.extract_video_metadata(link)
-            video = helper.generate_video(
+
+            video = manager.create_video(
                 video_metadata["title"],
                 video_metadata["youtubeId"],
                 video_metadata["description"],
                 video_metadata["duration"],
                 video_metadata["viewCount"],
-
+                ofGame=[game["uuid"]]
             )
-            # todo: add reference "ofGame" to Game
 
-            client.create_thing(helper.extract_attribute(video), "Video", video["uuid"])
+            exit()
 
             print("download and scrap video subtitles")
             helper.scrap_video_autosub(link.strip())
@@ -89,6 +90,7 @@ def populate_video():
 
 if __name__ == "__main__":
     create_schema.create_game_schema()
-    populate_game()
-    # populate_video()
+    manager = helper.Manager(weaviate.Client("http://localhost:8080"))
+    populate_game(manager)
+    populate_video(manager)
     # populate_article()

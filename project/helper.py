@@ -229,37 +229,57 @@ class Manager():
         else:
             return False
 
-    # def get_video_or_false(self, youtube_id):
-    #     result = self.execute_query(f"""
-    #     {{
-    #       Get {{
-    #         Things {{
-    #           Video(where: {{
-    #             path: ["youtubeId"],
-    #             operator: Equal,
-    #             valueString: "{youtube_id}"
-    #           }}) {{
-    #             uuid
-    #             title
-    #             duration
-    #             youtubeId
-    #             viewCount
-    #           }}
-    #         }}
-    #       }}
-    #     }}
-    #     """)
-    #
-    #     videos = result['data']['Get']['Things']['Video']
-    #     if len(videos):
-    #         return videos[0]
-    #     else:
-    #         return False
+    def get_video_or_false(self, youtube_id):
+        result = self.execute_query(f"""
+        {{
+          Get {{
+            Things {{
+              Video(where: {{
+                path: ["youtubeId"],
+                operator: Equal,
+                valueString: "{youtube_id}"
+              }}) {{
+                uuid
+                title
+                duration
+                youtubeId
+                viewCount
+              }}
+            }}
+          }}
+        }}
+        """)
 
-    # def get_or_create_video(self, youtube_id, video):
-    #     platform = self.get_platform_or_false(youtube_id)
-    #     if platform == False:
-    #         platform = generate_platform(youtube_id, [])
-    #         self.client.create_thing(extract_attribute(platform), "Platform", platform["uuid"])
-    #         return True, platform
-    #     return False, platform
+        videos = result['data']['Get']['Things']['Video']
+        if len(videos):
+            return videos[0]
+        else:
+            return False
+
+    def create_video(self, title, youtube_id, description, duration, view_count, ofGame=None, hasTags=None, hasSubs=None):
+        video_dict = {
+            "uuid": generate_id(),
+            "title": title,
+            "youtubeId": youtube_id,
+            "description": description,
+            "duration": duration,
+            "viewCount": view_count,
+        }
+
+        self.client.create_thing(extract_attribute(video_dict), "Video", video_dict["uuid"])
+
+        time.sleep(2)
+
+        if ofGame:
+            for game_uuid in ofGame:
+                self.client.add_reference_to_thing(video_dict["uuid"], "ofGame", game_uuid)
+
+        if hasTags:
+            for tag_uuid in hasTags:
+                self.client.add_reference_to_thing(video_dict["uuid"], "hasTags", tag_uuid)
+
+        if hasSubs:
+            for subtitle_uuid in hasSubs:
+                self.client.add_reference_to_thing(video_dict["uuid"], "hasSubs", subtitle_uuid)
+
+        return video_dict

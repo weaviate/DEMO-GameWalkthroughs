@@ -2,7 +2,6 @@ from project import helper, create_schema
 import glob
 import os
 import weaviate
-from weaviate.exceptions import UnexpectedStatusCodeException
 import time
 
 
@@ -26,9 +25,10 @@ def populate_game(manager):
                 game_genres.append(genre)
                 print(f"Get or Create Genre: {genre_name}, created: {created}, dict: {genre}")
 
-            game = manager.create_game(game_name, game_developer,
-                                        [e.get('uuid') for e in game_genres],
-                                        [e.get('uuid') for e in game_platforms])
+            game = manager.create_game(name=game_name,
+                                       developer=game_developer,
+                                       ofGenre=[e.get('uuid') for e in game_genres],
+                                       onPlatform=[e.get('uuid') for e in game_platforms])
             print(f"Created Game: {game}")
             print()
 
@@ -63,17 +63,13 @@ def populate_video(manager):
                 subtitle_path = subtitle_list[0]
                 extracted = helper.extract_autosub(subtitle_path)
 
+                print(f"Inserting {len(extracted)} subtitles")
                 inserted_subtitle_uuids = []
                 for e in extracted:
-                    try:
-                        subtitle = manager.create_subtitle(text=e[2],
-                                                           start_time=e[0],
-                                                           end_time=e[1],
-                                                           ofGame=[game["uuid"]])
-                        inserted_subtitle_uuids.append(subtitle["uuid"])
-                    except UnexpectedStatusCodeException:
-                        print("Exception on subtitles")
-                        print(subtitle)
+                    subtitle = manager.create_subtitle(text=e[2],
+                                                       start_time=e[0],
+                                                       end_time=e[1])
+                    inserted_subtitle_uuids.append(subtitle["uuid"])
 
                 time.sleep(2)
 

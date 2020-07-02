@@ -3,6 +3,8 @@ import newspaper
 import youtube_dl
 import re
 import time
+from weaviate.exceptions import UnexpectedStatusCodeException
+
 
 def generate_id():
     return str(uuid.uuid1())
@@ -186,10 +188,12 @@ class Manager():
         if ofGenre:
             for genre_uuid in ofGenre:
                 self.client.add_reference_to_thing(game_dict["uuid"], "ofGenre", genre_uuid)
+                self.client.add_reference_to_thing(genre_uuid, "hasGames", game_dict["uuid"])
 
         if onPlatform:
             for platform_uuid in onPlatform:
                 self.client.add_reference_to_thing(game_dict["uuid"], "onPlatform", platform_uuid)
+                self.client.add_reference_to_thing(platform_uuid, "hasGames", game_dict["uuid"])
 
         return game_dict
 
@@ -284,17 +288,20 @@ class Manager():
 
         return video_dict
 
-    def create_subtitle(self, text, start_time, end_time, ofGame=None):
+    def create_subtitle(self, text, start_time, end_time):
         subtitle_dict = {
             "uuid": generate_id(),
             "text": text,
             "startTime": start_time,
             "endTime": end_time,
-            "ofGame": ofGame if ofGame else [],
         }
 
-        self.client.create_thing(extract_attribute(subtitle_dict), "Subtitle", subtitle_dict["uuid"])
-        time.sleep(2)
+        try:
+            self.client.create_thing(extract_attribute(subtitle_dict), "Subtitle", subtitle_dict["uuid"])
+            return subtitle_dict
+        except UnexpectedStatusCodeException:
+            print("Exception on subtitles")
+            print(subtitle_dict)
 
     def add_reference_of_game_subtitle(self, game_uuid, subtitle_uuids=None):
         if subtitle_uuids:

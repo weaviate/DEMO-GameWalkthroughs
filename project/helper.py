@@ -283,3 +283,26 @@ class Manager():
                 self.client.add_reference_to_thing(video_dict["uuid"], "hasSubs", subtitle_uuid)
 
         return video_dict
+
+    def create_subtitle(self, text, start_time, end_time, ofGame=None):
+        subtitle_dict = {
+            "uuid": generate_id(),
+            "text": text,
+            "startTime": start_time,
+            "endTime": end_time,
+            "ofGame": ofGame if ofGame else [],
+        }
+
+        self.client.create_thing(extract_attribute(subtitle_dict), "Subtitle", subtitle_dict["uuid"])
+        time.sleep(2)
+
+    def add_reference_of_game(self, game_uuid, subtitle_uuids=None):
+        if subtitle_uuids:
+            for subtitle_uuid in subtitle_uuids:
+                self.client.add_reference_to_thing(subtitle_uuid, "ofGame", game_uuid)
+
+    def add_reference_has_subs(self, video_uuid, subtitle_uuids=None):
+        if subtitle_uuids:
+            for subtitle_uuid in subtitle_uuids:
+                self.client.add_reference_to_thing(video_uuid, "hasSubs", subtitle_uuid)
+

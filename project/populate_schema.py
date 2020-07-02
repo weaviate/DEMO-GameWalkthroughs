@@ -29,7 +29,8 @@ def populate_game():
             game = manager.create_game(game_name, game_developer,
                                         [e.get('uuid') for e in game_genres],
                                         [e.get('uuid') for e in game_platforms])
-            print(game)
+            print(f"Created Game: {game}")
+            print()
 
 
 def populate_video():

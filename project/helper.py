@@ -296,7 +296,7 @@ class Manager():
         self.client.create_thing(extract_attribute(subtitle_dict), "Subtitle", subtitle_dict["uuid"])
         time.sleep(2)
 
-    def add_reference_of_game(self, game_uuid, subtitle_uuids=None):
+    def add_reference_of_game_subtitle(self, game_uuid, subtitle_uuids=None):
         if subtitle_uuids:
             for subtitle_uuid in subtitle_uuids:
                 self.client.add_reference_to_thing(subtitle_uuid, "ofGame", game_uuid)

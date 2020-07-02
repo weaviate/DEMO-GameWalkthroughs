@@ -78,7 +78,7 @@ def populate_video(manager):
                 time.sleep(2)
 
                 # cross reference
-                manager.add_reference_of_game(game["uuid"], inserted_subtitle_uuids)
+                manager.add_reference_of_game_subtitle(game["uuid"], inserted_subtitle_uuids)
                 manager.add_reference_has_subs(video["uuid"], inserted_subtitle_uuids)
 
                 os.remove(subtitle_path)

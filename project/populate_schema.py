@@ -34,14 +34,11 @@ def populate_game(manager):
 
 
 def populate_video(manager):
-    # client = weaviate.Client("http://localhost:8080")
     with open("data/video_links") as i:
-        # todo: add batch
         for line in i:
             game_name, link = line.strip().split(';')
             print(f"game name: {game_name} | link: {link}")
 
-            # todo: get or create game instance
             game = manager.get_game_or_false(game_name)
             if game == False:
                 raise Exception(f"Game {game_name} is not there yet. Please run populate_game() first.")

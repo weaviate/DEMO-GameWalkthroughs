@@ -3,6 +3,7 @@ import glob
 import os
 import weaviate
 from weaviate.exceptions import UnexpectedStatusCodeException
+import time
 
 
 def populate_game(manager):
@@ -57,8 +58,6 @@ def populate_video(manager):
                 ofGame=[game["uuid"]]
             )
 
-            exit()
-
             print("download and scrap video subtitles")
             helper.scrap_video_autosub(link.strip())
             subtitle_list = glob.glob("*.vtt")
@@ -66,15 +65,24 @@ def populate_video(manager):
             if len(subtitle_list):
                 subtitle_path = subtitle_list[0]
                 extracted = helper.extract_autosub(subtitle_path)
+
+                inserted_subtitle_uuids = []
                 for e in extracted:
-                    # todo: insert into graph
-                    subtitle = helper.generate_subtitle(e[2], e[0], e[1])
                     try:
-                        client.create_thing(helper.extract_attribute(subtitle), "Subtitle", subtitle["uuid"])
-                        client.add_reference_to_thing(video["uuid"], "hasSubs", subtitle["uuid"])
+                        subtitle = manager.create_subtitle(text=e[2],
+                                                           start_time=e[0],
+                                                           end_time=e[1],
+                                                           ofGame=[game["uuid"]])
+                        inserted_subtitle_uuids.append(subtitle["uuid"])
                     except UnexpectedStatusCodeException:
                         print("Exception on subtitles")
                         print(subtitle)
+
+                time.sleep(2)
+
+                # cross reference
+                manager.add_reference_of_game(game["uuid"], inserted_subtitle_uuids)
+                manager.add_reference_has_subs(video["uuid"], inserted_subtitle_uuids)
 
                 os.remove(subtitle_path)
             else:

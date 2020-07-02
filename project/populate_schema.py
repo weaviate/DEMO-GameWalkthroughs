@@ -7,37 +7,29 @@ from weaviate.exceptions import UnexpectedStatusCodeException
 
 def populate_game():
     manager = helper.Manager(weaviate.Client("http://localhost:8080"))
-    platform_dict = {}
-    genre_dict = {}
-
     with open("data/games") as i:
         for line in i:
-            game_name, developer, genres, platforms = [e.strip() for e in line.strip().split(';')]
-            genres = [e.strip() for e in genres.split(',')]
-            platforms = [e.strip() for e in platforms.split(',')]
+            game_name, game_developer, raw_genres, raw_platforms = [e.strip() for e in line.strip().split(';')]
+            raw_genres = [e.strip() for e in raw_genres.split(',')]
+            raw_platforms = [e.strip() for e in raw_platforms.split(',')]
 
-            print(game_name)
-            print(developer)
-            print(genres)
-            print(platforms)
+            game_genres = []
+            game_platforms = []
 
-            for platform_name in platforms:
+            for platform_name in raw_platforms:
                 created, platform = manager.get_or_create_platform(platform_name)
-                if created:
-                    platform_dict[platform_name] = platform
-                print(platform_name, created, platform)
+                game_platforms.append(platform)
+                print(f"Get or Create Platform: {platform_name}, created: {created}, dict: {platform}")
 
-            for genre_name in genres:
+            for genre_name in raw_genres:
                 created, genre = manager.get_or_create_genre(genre_name)
-                if created:
-                    genre_dict[genre_name] = genre
-                print(genre_name, created, genre)
+                game_genres.append(genre)
+                print(f"Get or Create Genre: {genre_name}, created: {created}, dict: {genre}")
 
-            # todo: get or create platforms
-            # todo: get or create genres
-            # todo: get or create game
-            exit()
-
+            game = manager.create_game(game_name, game_developer,
+                                        [e.get('uuid') for e in game_genres],
+                                        [e.get('uuid') for e in game_platforms])
+            print(game)
 
 
 def populate_video():

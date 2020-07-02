@@ -2,6 +2,7 @@ import uuid
 import newspaper
 import youtube_dl
 import re
+import time
 
 def generate_id():
     return str(uuid.uuid1())
@@ -171,6 +172,26 @@ class Manager():
             self.client.create_thing(extract_attribute(genre), "Genre", genre["uuid"])
             return True, genre
         return False, genre
+
+    def create_game(self, name, developer, ofGenre=None, onPlatform=None):
+        game_dict = {
+            "uuid": generate_id(),
+            "name": name,
+            "developer": developer,
+        }
+        self.client.create_thing(extract_attribute(game_dict), "Game", game_dict["uuid"])
+
+        time.sleep(2)
+
+        if ofGenre:
+            for genre_uuid in ofGenre:
+                self.client.add_reference_to_thing(game_dict["uuid"], "ofGenre", genre_uuid)
+
+        if onPlatform:
+            for platform_uuid in onPlatform:
+                self.client.add_reference_to_thing(game_dict["uuid"], "onPlatform", platform_uuid)
+
+        return game_dict
 
     # def get_video_or_false(self, youtube_id):
     #     result = self.execute_query(f"""

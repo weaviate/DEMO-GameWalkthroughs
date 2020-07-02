@@ -193,6 +193,42 @@ class Manager():
 
         return game_dict
 
+    def get_game_or_false(self, game_name):
+        result = self.execute_query(f"""
+        {{
+          Get {{
+            Things {{
+              Game(where: {{
+                path: ["name"],
+                operator: Equal,
+                valueString: "{game_name}"
+              }}) {{
+                uuid
+                name
+                developer
+                OfGenre {{
+                  ... on Genre {{
+                    uuid
+                    name
+                  }}
+                }}
+                OnPlatform {{
+                  ... on Platform {{
+                    uuid
+                    name
+                  }}
+                }}
+              }}
+            }}
+          }}
+        }}
+        """)
+        genre = result['data']['Get']['Things']['Game']
+        if len(genre):
+            return genre[0]
+        else:
+            return False
+
     # def get_video_or_false(self, youtube_id):
     #     result = self.execute_query(f"""
     #     {{

@@ -9,7 +9,7 @@ def create_game_schema():
     if not client.is_reachable():
         raise Exception("Container is not reachable")
     if not client.contains_schema():
-        client.create_schema("game_schema.json")
+        client.create_schema("project/game_schema.json")
     else:
         print("Weaviate container already contained a schema")
 

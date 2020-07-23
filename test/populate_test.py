@@ -6,29 +6,6 @@ import time
 
 class TestPopulateGameSchema(unittest.TestCase):
 
-    get_video_with_ofGame = """
-    {
-      Get {
-        Things {
-          Video {
-            uuid
-            title
-            duration
-            viewCount
-            youtubeId
-            OfGame {
-              ... on Game {
-                uuid
-                name
-                developer
-              }
-            }
-          }
-        }
-      }
-    }
-    """
-
     def setUp(self) -> None:
         create_game_schema()
         self.client = weaviate.Client("http://localhost:8080")

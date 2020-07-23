@@ -228,7 +228,7 @@ class Manager():
         }}
         """)
         genre = result['data']['Get']['Things']['Game']
-        if len(genre):
+        if genre and len(genre):
             return genre[0]
         else:
             return False
@@ -255,7 +255,7 @@ class Manager():
         """)
 
         videos = result['data']['Get']['Things']['Video']
-        if len(videos):
+        if videos and len(videos):
             return videos[0]
         else:
             return False

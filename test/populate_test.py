@@ -52,26 +52,26 @@ class TestPopulateGameSchema(unittest.TestCase):
         self.assertFalse(created)
 
     def test_get_platform_or_false(self):
-        result = self.manager.get_platform_or_false('Platform 1')
+        result = self.manager.get_platform_or_false('Platform 2')
         self.assertFalse(result)
 
-        created, platform = self.manager.get_or_create_platform('Platform 1')
+        created, platform = self.manager.get_or_create_platform('Platform 2')
         self.uuid_list.append(platform['uuid'])
         self.assertTrue(created)
 
         time.sleep(2)
 
-        result = self.manager.get_platform_or_false('Platform 1')
+        result = self.manager.get_platform_or_false('Platform 2')
         self.assertTrue(result['uuid'] == platform['uuid'])
 
     def test_get_or_create_genre(self):
-        created, genre = self.manager.get_or_create_genre('Genre 1')
+        created, genre = self.manager.get_or_create_genre('Genre 2')
         self.uuid_list.append(genre['uuid'])
         self.assertTrue(created)
 
         time.sleep(2)
 
-        created, genre = self.manager.get_or_create_genre('Genre 1')
+        created, genre = self.manager.get_or_create_genre('Genre 2')
         self.assertFalse(created)
 
     def test_get_genre_or_false(self):

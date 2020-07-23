@@ -14,7 +14,7 @@ class TestPopulateGameSchema(unittest.TestCase):
 
     def tearDown(self) -> None:
         for uuid in self.uuid_list:
-            self.client.delete_thing(uuid)
+            self.client.delete(uuid)
         super().tearDown()
 
 

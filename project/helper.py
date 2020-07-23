@@ -140,7 +140,7 @@ class Manager():
         platform = self.get_platform_or_false(platform_name)
         if platform == False:
             platform = generate_platform(platform_name, [])
-            self.client.create_thing(extract_attribute(platform), "Platform", platform["uuid"])
+            self.client.create(extract_attribute(platform), "Platform", platform["uuid"])
             return True, platform
         return False, platform
 
@@ -171,7 +171,7 @@ class Manager():
         genre = self.get_genre_or_false(genre_name)
         if genre == False:
             genre = generate_genre(genre_name, [])
-            self.client.create_thing(extract_attribute(genre), "Genre", genre["uuid"])
+            self.client.create(extract_attribute(genre), "Genre", genre["uuid"])
             return True, genre
         return False, genre
 
@@ -181,19 +181,19 @@ class Manager():
             "name": name,
             "developer": developer,
         }
-        self.client.create_thing(extract_attribute(game_dict), "Game", game_dict["uuid"])
+        self.client.create(extract_attribute(game_dict), "Game", game_dict["uuid"])
 
         time.sleep(2)
 
         if ofGenre:
             for genre_uuid in ofGenre:
-                self.client.add_reference_to_thing(game_dict["uuid"], "ofGenre", genre_uuid)
-                self.client.add_reference_to_thing(genre_uuid, "hasGames", game_dict["uuid"])
+                self.client.add_reference(game_dict["uuid"], "ofGenre", genre_uuid)
+                self.client.add_reference(genre_uuid, "hasGames", game_dict["uuid"])
 
         if onPlatform:
             for platform_uuid in onPlatform:
-                self.client.add_reference_to_thing(game_dict["uuid"], "onPlatform", platform_uuid)
-                self.client.add_reference_to_thing(platform_uuid, "hasGames", game_dict["uuid"])
+                self.client.add_reference(game_dict["uuid"], "onPlatform", platform_uuid)
+                self.client.add_reference(platform_uuid, "hasGames", game_dict["uuid"])
 
         return game_dict
 
@@ -270,21 +270,21 @@ class Manager():
             "viewCount": view_count,
         }
 
-        self.client.create_thing(extract_attribute(video_dict), "Video", video_dict["uuid"])
+        self.client.create(extract_attribute(video_dict), "Video", video_dict["uuid"])
 
         time.sleep(2)
 
         if ofGame:
             for game_uuid in ofGame:
-                self.client.add_reference_to_thing(video_dict["uuid"], "ofGame", game_uuid)
+                self.client.add_reference(video_dict["uuid"], "ofGame", game_uuid)
 
         if hasTags:
             for tag_uuid in hasTags:
-                self.client.add_reference_to_thing(video_dict["uuid"], "hasTags", tag_uuid)
+                self.client.add_reference(video_dict["uuid"], "hasTags", tag_uuid)
 
         if hasSubs:
             for subtitle_uuid in hasSubs:
-                self.client.add_reference_to_thing(video_dict["uuid"], "hasSubs", subtitle_uuid)
+                self.client.add_reference(video_dict["uuid"], "hasSubs", subtitle_uuid)
 
         return video_dict
 
@@ -297,7 +297,7 @@ class Manager():
         }
 
         try:
-            self.client.create_thing(extract_attribute(subtitle_dict), "Subtitle", subtitle_dict["uuid"])
+            self.client.create(extract_attribute(subtitle_dict), "Subtitle", subtitle_dict["uuid"])
             return subtitle_dict
         except UnexpectedStatusCodeException:
             print("Exception on subtitles")
@@ -307,10 +307,10 @@ class Manager():
     def add_reference_of_game_subtitle(self, game_uuid, subtitle_uuids=None):
         if subtitle_uuids:
             for subtitle_uuid in subtitle_uuids:
-                self.client.add_reference_to_thing(subtitle_uuid, "ofGame", game_uuid)
+                self.client.add_reference(subtitle_uuid, "ofGame", game_uuid)
 
     def add_reference_has_subs(self, video_uuid, subtitle_uuids=None):
         if subtitle_uuids:
             for subtitle_uuid in subtitle_uuids:
-                self.client.add_reference_to_thing(video_uuid, "hasSubs", subtitle_uuid)
+                self.client.add_reference(video_uuid, "hasSubs", subtitle_uuid)
 

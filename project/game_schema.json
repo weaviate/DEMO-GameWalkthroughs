@@ -20,7 +20,7 @@
             "name": "name",
             "description": "The name of this game",
             "dataType": [
-              "text"
+              "string"
             ],
             "cardinality": "atMostOne",
             "vectorizePropertyName": false,
@@ -70,7 +70,7 @@
             "name": "name",
             "description": "The name of this genre",
             "dataType": [
-              "text"
+              "string"
             ],
             "cardinality": "atMostOne",
             "vectorizePropertyName": false,
@@ -99,7 +99,7 @@
             "name": "name",
             "description": "The name of this platform",
             "dataType": [
-              "text"
+              "string"
             ],
             "cardinality": "atMostOne",
             "vectorizePropertyName": true,
@@ -149,11 +149,11 @@
             "name": "youtubeId",
             "description": "The Youtube video ID of this video",
             "dataType": [
-              "text"
+              "string"
             ],
             "cardinality": "atMostOne",
             "vectorizePropertyName": false,
-            "index": false,
+            "index": true,
             "keywords": []
           },
           {
@@ -221,7 +221,7 @@
             "name": "name",
             "description": "The name of this tag",
             "dataType": [
-              "text"
+              "string"
             ],
             "cardinality": "atMostOne",
             "vectorizePropertyName": true,

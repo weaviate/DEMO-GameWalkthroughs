@@ -22,7 +22,7 @@ jobs:
         - pip install -r requirements.txt
       script:
         - python -m unittest test.create_schema_test
-
+        - python -m unittest test.populate_test
     - name: "3.8"
       branches:
         only:
@@ -32,3 +32,4 @@ jobs:
         - pip install -r requirements.txt
       script:
         - python -m unittest test.create_schema_test
+        - python -m unittest test.populate_test

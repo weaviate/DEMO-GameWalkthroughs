@@ -2,6 +2,9 @@ import uuid
 import newspaper
 import youtube_dl
 import re
+import time
+from weaviate.exceptions import UnexpectedStatusCodeException
+
 
 def generate_id():
     return str(uuid.uuid1())
@@ -101,3 +104,213 @@ def extract_autosub(subtitle_path):
     with open(subtitle_path) as i:
         raw_text = i.read()
         return re.findall("(\d\d:\d\d:\d\d\.\d\d\d) --> (\d\d:\d\d:\d\d\.\d\d\d).+\n(.{2,})\n", raw_text)
+
+
+class Manager():
+    def __init__(self, client):
+        self.client = client
+
+    def execute_query(self, query):
+        return self.client.query(query)
+
+    def get_platform_or_false(self, platform_name):
+        result = self.execute_query(f"""
+        {{
+          Get {{
+            Things {{
+              Platform(where: {{
+                path: ["name"],
+                operator: Equal,
+                valueString: "{platform_name}"
+              }}) {{
+                uuid
+                name
+              }}
+            }}
+          }}
+        }}
+        """)
+        platforms = result['data']['Get']['Things']['Platform']
+        if len(platforms):
+            return platforms[0]
+        else:
+            return False
+
+    def get_or_create_platform(self, platform_name):
+        platform = self.get_platform_or_false(platform_name)
+        if platform == False:
+            platform = generate_platform(platform_name, [])
+            self.client.create(extract_attribute(platform), "Platform", platform["uuid"])
+            return True, platform
+        return False, platform
+
+    def get_genre_or_false(self, genre_name):
+        result = self.execute_query(f"""
+        {{
+          Get {{
+            Things {{
+              Genre(where: {{
+                path: ["name"],
+                operator: Equal,
+                valueString: "{genre_name}"
+              }}) {{
+                uuid
+                name
+              }}
+            }}
+          }}
+        }}
+        """)
+        genre = result['data']['Get']['Things']['Genre']
+        if len(genre):
+            return genre[0]
+        else:
+            return False
+
+    def get_or_create_genre(self, genre_name):
+        genre = self.get_genre_or_false(genre_name)
+        if genre == False:
+            genre = generate_genre(genre_name, [])
+            self.client.create(extract_attribute(genre), "Genre", genre["uuid"])
+            return True, genre
+        return False, genre
+
+    def create_game(self, name, developer, ofGenre=None, onPlatform=None):
+        game_dict = {
+            "uuid": generate_id(),
+            "name": name,
+            "developer": developer,
+        }
+        self.client.create(extract_attribute(game_dict), "Game", game_dict["uuid"])
+
+        time.sleep(2)
+
+        if ofGenre:
+            for genre_uuid in ofGenre:
+                self.client.add_reference(game_dict["uuid"], "ofGenre", genre_uuid)
+                self.client.add_reference(genre_uuid, "hasGames", game_dict["uuid"])
+
+        if onPlatform:
+            for platform_uuid in onPlatform:
+                self.client.add_reference(game_dict["uuid"], "onPlatform", platform_uuid)
+                self.client.add_reference(platform_uuid, "hasGames", game_dict["uuid"])
+
+        return game_dict
+
+    def get_game_or_false(self, game_name):
+        result = self.execute_query(f"""
+        {{
+          Get {{
+            Things {{
+              Game(where: {{
+                path: ["name"],
+                operator: Equal,
+                valueString: "{game_name}"
+              }}) {{
+                uuid
+                name
+                developer
+                OfGenre {{
+                  ... on Genre {{
+                    uuid
+                    name
+                  }}
+                }}
+                OnPlatform {{
+                  ... on Platform {{
+                    uuid
+                    name
+                  }}
+                }}
+              }}
+            }}
+          }}
+        }}
+        """)
+        genre = result['data']['Get']['Things']['Game']
+        if genre and len(genre):
+            return genre[0]
+        else:
+            return False
+
+    def get_video_or_false(self, youtube_id):
+        result = self.execute_query(f"""
+        {{
+          Get {{
+            Things {{
+              Video(where: {{
+                path: ["youtubeId"],
+                operator: Equal,
+                valueString: "{youtube_id}"
+              }}) {{
+                uuid
+                title
+                duration
+                youtubeId
+                viewCount
+              }}
+            }}
+          }}
+        }}
+        """)
+
+        videos = result['data']['Get']['Things']['Video']
+        if videos and len(videos):
+            return videos[0]
+        else:
+            return False
+
+    def create_video(self, title, youtube_id, description, duration, view_count, ofGame=None, hasTags=None, hasSubs=None):
+        video_dict = {
+            "uuid": generate_id(),
+            "title": title,
+            "youtubeId": youtube_id,
+            "description": description,
+            "duration": duration,
+            "viewCount": view_count,
+        }
+
+        self.client.create(extract_attribute(video_dict), "Video", video_dict["uuid"])
+
+        time.sleep(2)
+
+        if ofGame:
+            for game_uuid in ofGame:
+                self.client.add_reference(video_dict["uuid"], "ofGame", game_uuid)
+
+        if hasTags:
+            for tag_uuid in hasTags:
+                self.client.add_reference(video_dict["uuid"], "hasTags", tag_uuid)
+
+        if hasSubs:
+            for subtitle_uuid in hasSubs:
+                self.client.add_reference(video_dict["uuid"], "hasSubs", subtitle_uuid)
+
+        return video_dict
+
+    def create_subtitle(self, text, start_time, end_time):
+        subtitle_dict = {
+            "uuid": generate_id(),
+            "text": text,
+            "startTime": start_time,
+            "endTime": end_time,
+        }
+
+        try:
+            self.client.create(extract_attribute(subtitle_dict), "Subtitle", subtitle_dict["uuid"])
+            return subtitle_dict
+        except UnexpectedStatusCodeException:
+            print("Exception on subtitles")
+            print(subtitle_dict)
+            return None
+
+    def add_reference_of_game_subtitle(self, game_uuid, subtitle_uuids=None):
+        if subtitle_uuids:
+            for subtitle_uuid in subtitle_uuids:
+                self.client.add_reference(subtitle_uuid, "ofGame", game_uuid)
+
+    def add_reference_has_subs(self, video_uuid, subtitle_uuids=None):
+        if subtitle_uuids:
+            for subtitle_uuid in subtitle_uuids:
+                self.client.add_reference(video_uuid, "hasSubs", subtitle_uuid)
+
